@@ -1,3 +1,37 @@
+import { EmbedBuilder } from 'discord.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
+
+const requiredRoles = {
+  'P: 100+': { 'color': '#ffffff' },
+  'P: 250+': { 'color': '#f4ebe6' },
+  'P: 500+': { 'color': '#917070' },
+  'P: 1000+': { 'color': '#d6d69c' },
+  'P: 1500+': { 'color': 'Orange' },
+  'P: 2500+': { 'color': 'Aqua' },
+}
+
+const verifyRequiredRolesExisting = async (guild) => {
+  const roles = guild.roles.cache;
+  const rolesNames = roles.map(role => role.name);
+
+  for (const [roleName, roleData] of Object.entries(requiredRoles)) {
+    if (!rolesNames.includes(roleName)) {
+      const role = await guild.roles.create({
+        name: roleName,
+        color: roleData.color,
+        mentionable: false,
+      });
+
+      await role.setIcon('./assets/vatsim.png');
+    }
+  }
+
+  return true;
+}
+
 export const initRoleAssignmentsModule = async (client, guild) => {
   await verifyRequiredRolesExisting(guild);
 
@@ -79,4 +113,3 @@ export const initRoleAssignmentsModule = async (client, guild) => {
   });
 
   console.log('[INFO] Role assignments module initialized');
-}
