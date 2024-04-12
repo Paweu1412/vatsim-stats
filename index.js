@@ -22,7 +22,7 @@ client.once("ready", async () => {
 
   await guild.members.fetch();
 
-  initRoleAssignmentsModule(guild);
+  await initRoleAssignmentsModule(guild);
 });
 
 
