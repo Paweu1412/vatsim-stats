@@ -6,7 +6,6 @@ import './memberPrototypes.js';
 import { initRoleAssignmentsModule } from './modules/rolesAssignments.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const BOT_CHANNEL_ID = process.env.BOT_CHANNEL_ID;
 const BOT_GUILD_ID = process.env.BOT_GUILD_ID;
 
 const client = new Client({

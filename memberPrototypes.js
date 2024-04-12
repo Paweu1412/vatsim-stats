@@ -8,16 +8,12 @@ GuildMember.prototype.getNetworkCID = function () {
 }
 
 GuildMember.prototype.getNetworkPilotTime = async function () {
-  console.log(1);
   if (this.getNetworkCID() === null) { return null; }
-  console.log(2);
 
   const networkCID = this.getNetworkCID();
-  console.log(networkCID);
 
-  fetch(`https://api.vatsim.net/v2/members/${networkCID}/stats`)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data.pilot);
-    });
+  const response = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/stats`);
+  const data = await response.json();
+
+  return data.pilot;
 }
