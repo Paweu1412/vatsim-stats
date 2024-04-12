@@ -113,3 +113,4 @@ export const initRoleAssignmentsModule = async (client, guild) => {
   });
 
   console.log('[INFO] Role assignments module initialized');
+}
