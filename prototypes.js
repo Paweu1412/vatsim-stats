@@ -15,6 +15,8 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
   const response = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/stats`);
   const data = await response.json();
 
+  if (!data?.pilot) { return null; }
+
   return data.pilot;
 }
 

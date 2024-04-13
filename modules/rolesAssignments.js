@@ -42,13 +42,17 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM`);
 
     let networkPilotHours = await member.getNetworkPilotTime();
-    let reachedNewRecord = true;
+    if (networkPilotHours === null) {
+      console.log(`[ROLES] Failed to fetch ${member.user.username} hours on VATSIM`);
+      return;
+    }
+
+    let reachedNewRecord = false;
     let assignedRole = null;
+    let lastHighestRole = null;
 
     let currentlyAssignedVatsimRole = member.roles.cache.filter(role => role.name.startsWith('P:'))
     currentlyAssignedVatsimRole = currentlyAssignedVatsimRole.map(role => Number(role.name.match(/\d+/)[0]))[0];
-
-    let lastHighestRole = null;
 
     for (const [roleName] of Object.entries(requiredRoles)) {
       const hoursFromRoleName = Number(roleName.match(/\d+/)[0]);
@@ -61,10 +65,16 @@ export const initRoleAssignmentsModule = async (client, guild) => {
 
     if (currentlyAssignedVatsimRole !== lastHighestRole) {
       const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('P:'));
-      await member.roles.remove(rolesToRemove);
+      if (rolesToRemove) {
+        await member.roles.remove(rolesToRemove);
+      }
+
 
       const roleToAdd = guild.roles.cache.find(role => role.name === assignedRole);
-      await member.roles.add(roleToAdd);
+
+      if (roleToAdd) {
+        await member.roles.add(roleToAdd);
+      }
 
       if (currentlyAssignedVatsimRole < lastHighestRole) {
         reachedNewRecord = true;
@@ -85,7 +95,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
       channel.send({ embeds: [embed] });
     }
 
-    setInterval(() => setMemberRole(member), 3600000);
+    setTimeout(() => setMemberRole(member), Math.floor(Math.random() * 1800000) + 1800000);
   }
 
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
@@ -100,6 +110,15 @@ export const initRoleAssignmentsModule = async (client, guild) => {
 
       const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('P:'));
       await newMember.roles.remove(rolesToRemove);
+    }
+
+    if (oldMember.getNetworkCID() !== newMember.getNetworkCID()) {
+      console.log(`[ROLES] Pilot ${newMember.user.username} has changed VATSIM CID`);
+
+      const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('P:'));
+      await newMember.roles.remove(rolesToRemove);
+
+      setMemberRole(newMember);
     }
   });
 
