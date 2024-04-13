@@ -8,12 +8,17 @@ const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
 const LANGUAGE = process.env.LANGUAGE;
 
 const requiredRoles = {
-  'P: 100+': { 'color': '#ffffff' },
-  'P: 250+': { 'color': '#f4ebe6' },
-  'P: 500+': { 'color': '#917070' },
-  'P: 1000+': { 'color': '#d6d69c' },
-  'P: 1500+': { 'color': 'Orange' },
-  'P: 2500+': { 'color': 'Aqua' },
+  'P: 100h+': { 'color': '#ffffff', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  'P: 150h+': { 'color': '#ffffff', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  'P: 200h+': { 'color': '#f4ebe6', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
+  'P: 250h+': { 'color': '#f4ebe6', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
+  'P: 350h+': { 'color': '#917070', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
+  'P: 500h+': { 'color': '#917070', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
+  'P: 1000h+': { 'color': '#d6d69c', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
+  'P: 1250h+': { 'color': '#d6d69c', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
+  'P: 1500h+': { 'color': 'Aqua', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 2000h+': { 'color': 'Orange', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 2500h+': { 'color': 'DarkOrange', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
 }
 
 const verifyRequiredRolesExisting = async (guild) => {
@@ -36,6 +41,8 @@ const verifyRequiredRolesExisting = async (guild) => {
 }
 
 export const initRoleAssignmentsModule = async (client, guild) => {
+  let runningTimeouts = [];
+
   await verifyRequiredRolesExisting(guild);
 
   const setMemberRole = async (member) => {
@@ -69,7 +76,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
         await member.roles.remove(rolesToRemove);
       }
 
-
       const roleToAdd = guild.roles.cache.find(role => role.name === assignedRole);
 
       if (roleToAdd) {
@@ -90,26 +96,33 @@ export const initRoleAssignmentsModule = async (client, guild) => {
         .setTitle(locales[LANGUAGE].title)
         .setDescription(locales[LANGUAGE].message.format(`<@${member.user.id}>`, Number(assignedRole.match(/\d+/)[0])))
         .setColor(requiredRoles[assignedRole].color)
-        .setImage('https://i.imgur.com/2CifDr3.gif')
+        .setImage(requiredRoles[assignedRole].banner);
 
       channel.send({ embeds: [embed] });
     }
 
-    setTimeout(() => setMemberRole(member), Math.floor(Math.random() * 1800000) + 1800000);
+    runningTimeouts[member] = setTimeout(() => setMemberRole(member), Math.floor(Math.random() * 1800000) + 1800000);
   }
 
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
-    if (oldMember.getNetworkCID() === null && newMember.getNetworkCID() !== null) {
-      console.log(`[ROLES] Pilot ${newMember.user.username} has added VATSIM CID`);
-
-      setMemberRole(newMember);
-    }
-
     if (oldMember.getNetworkCID() !== null && newMember.getNetworkCID() === null) {
       console.log(`[ROLES] Pilot ${newMember.user.username} has removed VATSIM CID`);
 
       const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('P:'));
       await newMember.roles.remove(rolesToRemove);
+
+      clearTimeout(runningTimeouts[oldMember]);
+      delete runningTimeouts[oldMember];
+
+      return;
+    }
+
+    if (oldMember.getNetworkCID() === null && newMember.getNetworkCID() !== null) {
+      console.log(`[ROLES] Pilot ${newMember.user.username} has added VATSIM CID`);
+
+      setMemberRole(newMember);
+
+      return;
     }
 
     if (oldMember.getNetworkCID() !== newMember.getNetworkCID()) {
@@ -118,7 +131,12 @@ export const initRoleAssignmentsModule = async (client, guild) => {
       const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('P:'));
       await newMember.roles.remove(rolesToRemove);
 
+      clearTimeout(runningTimeouts[oldMember]);
+      delete runningTimeouts[oldMember];
+
       setMemberRole(newMember);
+
+      return;
     }
   });
 

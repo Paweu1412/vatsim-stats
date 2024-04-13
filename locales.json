@@ -5,6 +5,6 @@
   },
   "pl": {
     "title": "Awans dla pilota!",
-    "message": "Pilot {0} osiągnął pułap przelatanych ponad {1} godzin na VATSIM, więc został przypisany do nowej rangi na serwerze. Gratulacje! 🥳"
+    "message": "Pilot {0} osiągnął pułap ponad {1} przelatanych godzin na VATSIM, więc został przypisany do nowej rangi na serwerze. Gratulacje! 🥳"
   }
 }
