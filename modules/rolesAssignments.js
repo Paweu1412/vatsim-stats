@@ -2,7 +2,10 @@ import { EmbedBuilder } from 'discord.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import locales from '../locales.json' assert { type: 'json' };
+
 const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
+const LANGUAGE = process.env.LANGUAGE;
 
 const requiredRoles = {
   'P: 100+': { 'color': '#ffffff' },
@@ -39,7 +42,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM`);
 
     let networkPilotHours = await member.getNetworkPilotTime();
-    let reachedNewRecord = false;
+    let reachedNewRecord = true;
     let assignedRole = null;
 
     let currentlyAssignedVatsimRole = member.roles.cache.filter(role => role.name.startsWith('P:'))
@@ -71,9 +74,11 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     if (reachedNewRecord) {
       const channel = guild.channels.cache.get(BOT_MESSAGES_ID);
 
+      `Pilot <@${member.user.id}> has reached a ceiling of more than ${Number(assignedRole.match(/\d+/)[0])} hours on VATSIM, so has been assigned to a new role. Congratulations! 🥳`
+
       const embed = new EmbedBuilder()
-        .setTitle(`Pilot's promotion!`)
-        .setDescription(`Pilot <@${member.user.id}> has reached a ceiling of more than ${Number(assignedRole.match(/\d+/)[0])} hours on VATSIM, so has been assigned to a new role. Congratulations! 🥳`)
+        .setTitle(locales[LANGUAGE].title)
+        .setDescription(locales[LANGUAGE].message.format(`<@${member.user.id}>`, Number(assignedRole.match(/\d+/)[0])))
         .setColor(requiredRoles[assignedRole].color)
         .setImage('https://i.imgur.com/2CifDr3.gif')
 
@@ -101,7 +106,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
   guild.members.cache.map(async member => {
     if (member.user.bot) { return; }
     if (member.getNetworkCID() === null) {
-      // get roles
       if (member.user.username !== 'pavvciu') return;
       const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('P:')).map(role => role);
       await member.roles.remove(rolesToRemove);

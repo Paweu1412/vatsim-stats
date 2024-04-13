@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import dotenv from 'dotenv';
 dotenv.config();
-import './memberPrototypes.js';
+import './prototypes.js';
 
 import { initRoleAssignmentsModule } from './modules/rolesAssignments.js';
 
@@ -24,6 +24,5 @@ client.once("ready", async () => {
 
   await initRoleAssignmentsModule(client, guild);
 });
-
 
 client.login(BOT_TOKEN);

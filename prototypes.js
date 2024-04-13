@@ -17,3 +17,11 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
 
   return data.pilot;
 }
+
+String.prototype.format = function () {
+  let args = arguments;
+
+  return this.replace(/{(\d+)}/g, function (match, number) {
+    return typeof args[number] != 'undefined' ? args[number] : match;
+  });
+};
