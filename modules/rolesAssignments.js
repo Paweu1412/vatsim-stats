@@ -8,19 +8,22 @@ const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
 const LANGUAGE = process.env.LANGUAGE;
 
 const requiredRoles = {
-  'P: 100h+': { 'color': '#ffffff', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
-  'P: 150h+': { 'color': '#ffffff', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
-  'P: 200h+': { 'color': '#f4ebe6', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
-  'P: 250h+': { 'color': '#f4ebe6', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
-  'P: 350h+': { 'color': '#917070', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
-  'P: 500h+': { 'color': '#917070', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
-  'P: 1000h+': { 'color': '#d6d69c', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
-  'P: 1250h+': { 'color': '#d6d69c', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
-  'P: 1500h+': { 'color': 'Yellow', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
-  'P: 2000h+': { 'color': 'Orange', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
-  'P: 2500h+': { 'color': 'DarkOrange', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
-  'P: 4000h+': { 'color': 'Red', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
-  'P: 5000h+': { 'color': 'DarkRed', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 100h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  'P: 150h+': { 'color': '#FFF5CC', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  'P: 200h+': { 'color': '#FFEB99', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
+  'P: 250h+': { 'color': '#FFE066', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
+  'P: 300h+': { 'color': '#FFD633', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
+  'P: 350h+': { 'color': '#FFCC00', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
+  'P: 500h+': { 'color': '#FFB200', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
+  'P: 750h+': { 'color': '#FF9900', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
+  'P: 1000h+': { 'color': '#FF7F00', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
+  'P: 1250h+': { 'color': '#FF6600', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
+  'P: 1500h+': { 'color': '#FF4C00', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 2000h+': { 'color': '#FF3300', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 2500h+': { 'color': '#FF1900', 'banner': 'https://i.imgur.com/xO0CBr2.gif' },
+  'P: 3000h+': { 'color': '#FF0000', 'banner': 'https://i.imgur.com/xO0CBr2.gif' },
+  'P: 4000h+': { 'color': '#E60000', 'banner': 'https://i.imgur.com/vAxzTME.gif' },
+  'P: 5000h+': { 'color': '#CC0000', 'banner': 'https://i.imgur.com/vAxzTME.gif' },
 }
 
 const verifyRequiredRolesExisting = async (guild) => {
@@ -143,15 +146,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
 
   guild.members.cache.map(async member => {
     if (member.user.bot) { return; }
-    if (member.getNetworkCID() === null) {
-      const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('P:')).map(role => role);
-
-      if (rolesToRemove) {
-        await member.roles.remove(rolesToRemove);
-      }
-
-      return;
-    }
+    if (member.getNetworkCID() === null) { return; }
 
     setMemberRole(member);
   });
