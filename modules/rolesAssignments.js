@@ -46,8 +46,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
   await verifyRequiredRolesExisting(guild);
 
   const setMemberRole = async (member) => {
-    console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM`);
-
     let networkPilotHours = await member.getNetworkPilotTime();
     if (networkPilotHours === null) {
       console.log(`[ROLES] Failed to fetch ${member.user.username} hours on VATSIM`);
@@ -99,7 +97,10 @@ export const initRoleAssignmentsModule = async (client, guild) => {
       channel.send({ embeds: [embed] });
     }
 
-    runningTimeouts[member] = setTimeout(() => setMemberRole(member), Math.floor(Math.random() * 1800000) + 1800000);
+    runningTimeouts[member] = setTimeout(() => {
+      console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM executed by timeout`);
+      setMemberRole(member);
+    }, 2000);
   }
 
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
