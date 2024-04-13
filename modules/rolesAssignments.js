@@ -16,9 +16,11 @@ const requiredRoles = {
   'P: 500h+': { 'color': '#917070', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
   'P: 1000h+': { 'color': '#d6d69c', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
   'P: 1250h+': { 'color': '#d6d69c', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
-  'P: 1500h+': { 'color': 'Aqua', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 1500h+': { 'color': 'Yellow', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
   'P: 2000h+': { 'color': 'Orange', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
   'P: 2500h+': { 'color': 'DarkOrange', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 4000h+': { 'color': 'Red', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  'P: 5000h+': { 'color': 'DarkRed', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
 }
 
 const verifyRequiredRolesExisting = async (guild) => {
@@ -143,7 +145,10 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     if (member.user.bot) { return; }
     if (member.getNetworkCID() === null) {
       const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('P:')).map(role => role);
-      await member.roles.remove(rolesToRemove);
+
+      if (rolesToRemove) {
+        await member.roles.remove(rolesToRemove);
+      }
 
       return;
     }

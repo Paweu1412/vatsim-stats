@@ -17,6 +17,8 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
 
   if (!data?.pilot) { return null; }
 
+  console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM - ${data.pilot}`)
+
   return data.pilot;
 }
 
