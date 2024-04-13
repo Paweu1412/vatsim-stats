@@ -90,8 +90,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     if (reachedNewRecord) {
       const channel = guild.channels.cache.get(BOT_MESSAGES_ID);
 
-      `Pilot <@${member.user.id}> has reached a ceiling of more than ${Number(assignedRole.match(/\d+/)[0])} hours on VATSIM, so has been assigned to a new role. Congratulations! 🥳`
-
       const embed = new EmbedBuilder()
         .setTitle(locales[LANGUAGE].title)
         .setDescription(locales[LANGUAGE].message.format(`<@${member.user.id}>`, Number(assignedRole.match(/\d+/)[0])))
