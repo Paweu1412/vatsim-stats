@@ -8,22 +8,22 @@ const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
 const LANGUAGE = process.env.LANGUAGE;
 
 const requiredRoles = {
-  'P: 100h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
-  'P: 150h+': { 'color': '#FFF5CC', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
-  'P: 200h+': { 'color': '#FFEB99', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
-  'P: 250h+': { 'color': '#FFE066', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
-  'P: 300h+': { 'color': '#FFD633', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
-  'P: 350h+': { 'color': '#FFCC00', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
-  'P: 500h+': { 'color': '#FFB200', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
-  'P: 750h+': { 'color': '#FF9900', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
-  'P: 1000h+': { 'color': '#FF7F00', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
-  'P: 1250h+': { 'color': '#FF6600', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
-  'P: 1500h+': { 'color': '#FF4C00', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
-  'P: 2000h+': { 'color': '#FF3300', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
-  'P: 2500h+': { 'color': '#FF1900', 'banner': 'https://i.imgur.com/xO0CBr2.gif' },
-  'P: 3000h+': { 'color': '#FF0000', 'banner': 'https://i.imgur.com/xO0CBr2.gif' },
-  'P: 4000h+': { 'color': '#E60000', 'banner': 'https://i.imgur.com/vAxzTME.gif' },
-  'P: 5000h+': { 'color': '#CC0000', 'banner': 'https://i.imgur.com/vAxzTME.gif' },
+  '👨‍✈️ 100h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  '👨‍✈️ 150h+': { 'color': '#FFF5CC', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  '👨‍✈️ 200h+': { 'color': '#FFEB99', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
+  '👨‍✈️ 250h+': { 'color': '#FFE066', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
+  '👨‍✈️ 300h+': { 'color': '#FFD633', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
+  '👨‍✈️ 350h+': { 'color': '#FFCC00', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
+  '👨‍✈️ 500h+': { 'color': '#FFB200', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
+  '👨‍✈️ 750h+': { 'color': '#FF9900', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
+  '👨‍✈️ 1000h+': { 'color': '#FF7F00', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
+  '👨‍✈️ 1250h+': { 'color': '#FF6600', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
+  '👨‍✈️ 1500h+': { 'color': '#FF4C00', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  '👨‍✈️ 2000h+': { 'color': '#FF3300', 'banner': 'https://i.imgur.com/TZumq8b.gif' },
+  '👨‍✈️ 2500h+': { 'color': '#FF1900', 'banner': 'https://i.imgur.com/xO0CBr2.gif' },
+  '👨‍✈️ 3000h+': { 'color': '#FF0000', 'banner': 'https://i.imgur.com/xO0CBr2.gif' },
+  '👨‍✈️ 4000h+': { 'color': '#E60000', 'banner': 'https://i.imgur.com/vAxzTME.gif' },
+  '👨‍✈️ 5000h+': { 'color': '#CC0000', 'banner': 'https://i.imgur.com/vAxzTME.gif' },
 }
 
 const verifyRequiredRolesExisting = async (guild) => {
@@ -61,7 +61,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     let assignedRole = null;
     let lastHighestRole = null;
 
-    let currentlyAssignedVatsimRole = member.roles.cache.filter(role => role.name.startsWith('P:'))
+    let currentlyAssignedVatsimRole = member.roles.cache.filter(role => role.name.startsWith('👨‍✈️'))
     currentlyAssignedVatsimRole = currentlyAssignedVatsimRole.map(role => Number(role.name.match(/\d+/)[0]))[0];
 
     for (const [roleName] of Object.entries(requiredRoles)) {
@@ -74,7 +74,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     }
 
     if (currentlyAssignedVatsimRole !== lastHighestRole) {
-      const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('P:'));
+      const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('👨‍✈️'));
       if (rolesToRemove) {
         await member.roles.remove(rolesToRemove);
       }
@@ -112,7 +112,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     if (oldMember.getNetworkCID() !== null && newMember.getNetworkCID() === null) {
       console.log(`[ROLES] Pilot ${newMember.user.username} has removed VATSIM CID`);
 
-      const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('P:'));
+      const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('👨‍✈️'));
       await newMember.roles.remove(rolesToRemove);
 
       clearTimeout(runningTimeouts[oldMember]);
@@ -132,7 +132,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     if (oldMember.getNetworkCID() !== newMember.getNetworkCID()) {
       console.log(`[ROLES] Pilot ${newMember.user.username} has changed VATSIM CID`);
 
-      const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('P:'));
+      const rolesToRemove = newMember.roles.cache.filter(role => role.name.startsWith('👨‍✈️'));
       await newMember.roles.remove(rolesToRemove);
 
       clearTimeout(runningTimeouts[oldMember]);
