@@ -143,7 +143,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
   guild.members.cache.map(async member => {
     if (member.user.bot) { return; }
     if (member.getNetworkCID() === null) {
-      if (member.user.username !== 'pavvciu') return;
       const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('P:')).map(role => role);
       await member.roles.remove(rolesToRemove);
 
