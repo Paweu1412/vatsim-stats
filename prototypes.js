@@ -7,6 +7,8 @@ GuildMember.prototype.getNetworkCID = function () {
   return match ? match[1] : null;
 }
 
+let lastHours = [];
+
 GuildMember.prototype.getNetworkPilotTime = async function () {
   if (this.getNetworkCID() === null) { return null; }
 
@@ -17,7 +19,8 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
 
   if (!data?.pilot) { return null; }
 
-  console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM - ${data.pilot}`)
+  lastHours[this.user.username] = data.pilot;
+  console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM - ${data.pilot} / ${data.pilot - lastHours[this.user.username] || 0}h difference since last check`);
 
   return data.pilot;
 }
