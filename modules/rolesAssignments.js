@@ -47,6 +47,10 @@ const verifyRequiredRolesExisting = async (guild) => {
   return true;
 }
 
+const getRandomTimeout = () => {
+  return Math.floor(Math.random() * (5 * 60 * 1000 - 1 * 60 * 1000 + 1)) + 1 * 60 * 1000;
+}
+
 export const initRoleAssignmentsModule = async (client, guild) => {
   let runningTimeouts = [];
 
@@ -107,7 +111,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     runningTimeouts[member] = setTimeout(() => {
       console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM executed by timeout`);
       setMemberRole(member);
-    }, 60000);
+    }, getRandomTimeout());
   }
 
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
