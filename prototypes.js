@@ -29,7 +29,7 @@ setInterval(async () => {
       if (endTime.toDateString() !== today.toDateString()) { continue; }
 
       const timeDifference = endTime - startTime;
-      const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
+      const hoursDifference = timeDifference / 36000;
 
       if (additionalTime[memberCID]) {
         if (!additionalTime[memberCID][memberCallsign]) {
@@ -51,7 +51,7 @@ const getSumOfAdditionalTime = (networkCID) => {
     sum += Number(hours);
   }
 
-  return sum;
+  return Math.round(sum * 100) / 100;
 }
 
 GuildMember.prototype.getNetworkPilotTime = async function () {
