@@ -107,7 +107,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     runningTimeouts[member] = setTimeout(() => {
       console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM executed by timeout`);
       setMemberRole(member);
-    }, Math.floor(Math.random() * 1800000) + 1800000);
+    }, 60000);
   }
 
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
