@@ -12,32 +12,37 @@ let additionalTime = {}
 setInterval(async () => {
   if (Object.keys(additionalTime).length === 0) { return; }
 
-  const response = await fetch('https://api.vatsim.net/v2/members/online');
-  const data = await response.json();
+  for (const [networkCID] of Object.entries(additionalTime)) {
+    const response = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/history`);
+    const data = await response.json();
 
-  if (!data) { return; }
+    if (!data) { return; }
 
-  for (const member of data) {
-    const memberCID = member.id;
-    const memberCallsign = member.callsign;
+    for (const item of data.items) {
+      const memberCID = item.vatsim_id;
+      const memberCallsign = item.callsign;
 
-    const startTime = new Date(member.start);
-    const currentTime = new Date();
+      const startTime = new Date(item.start);
+      const endTime = item.end === null ? new Date() : new Date(item.end);
 
-    const timeDifference = currentTime - startTime;
-    const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
+      const today = new Date();
+      if (endTime.toDateString() !== today.toDateString()) { continue; }
 
-    if (additionalTime[memberCID]) {
-      if (!additionalTime[memberCID][memberCallsign]) {
-        additionalTime[memberCID][memberCallsign] = hoursDifference;
-      }
+      const timeDifference = endTime - startTime;
+      const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
 
-      if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
-        additionalTime[memberCID][memberCallsign] = hoursDifference;
+      if (additionalTime[memberCID]) {
+        if (!additionalTime[memberCID][memberCallsign]) {
+          additionalTime[memberCID][memberCallsign] = hoursDifference;
+        }
+
+        if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
+          additionalTime[memberCID][memberCallsign] = hoursDifference;
+        }
       }
     }
-  }
-}, 30000);
+  };
+}, 60000);
 
 const getSumOfAdditionalTime = (networkCID) => {
   let sum = 0;
