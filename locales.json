@@ -4,7 +4,7 @@
     "message": "Pilot {0} has reached a ceiling of more than {1} hours flown on VATSIM, so has been assigned to the new role. Congratulations! 🥳"
   },
   "pl": {
-    "title": "Awans dla pilota!",
-    "message": "Pilot {0} osiągnął pułap ponad {1} przelatanych godzin na VATSIM, więc został przypisany do nowej rangi na serwerze. Gratulacje! 🥳"
+    "title": "Mamy to, awans!",
+    "message": "{0} osiągnął kolejny kamień milowy dobijając pułap ponad {1} przelatanych godzin na VATSIM. Dzięki, że tak chętnie zasilasz wirtualne niebo. Dziś pijemy Twoje zdrowie! 🥳"
   }
 }

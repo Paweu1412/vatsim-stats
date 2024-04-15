@@ -9,41 +9,6 @@ GuildMember.prototype.getNetworkCID = function () {
 
 let additionalTime = {}
 
-setInterval(async () => {
-  if (Object.keys(additionalTime).length === 0) { return; }
-
-  for (const [networkCID] of Object.entries(additionalTime)) {
-    const response = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/history`);
-    const data = await response.json();
-
-    if (!data) { return; }
-
-    for (const item of data.items) {
-      const memberCID = item.vatsim_id;
-      const memberCallsign = item.callsign;
-
-      const startTime = new Date(item.start);
-      const endTime = item.end === null ? new Date() : new Date(item.end);
-
-      const today = new Date();
-      if (endTime.toDateString() !== today.toDateString()) { continue; }
-
-      const timeDifference = endTime - startTime;
-      const hoursDifference = timeDifference / 36000;
-
-      if (additionalTime[memberCID]) {
-        if (!additionalTime[memberCID][memberCallsign]) {
-          additionalTime[memberCID][memberCallsign] = hoursDifference;
-        }
-
-        if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
-          additionalTime[memberCID][memberCallsign] = hoursDifference;
-        }
-      }
-    }
-  };
-}, 60000);
-
 const getSumOfAdditionalTime = (networkCID) => {
   let sum = 0;
 
@@ -51,7 +16,7 @@ const getSumOfAdditionalTime = (networkCID) => {
     sum += Number(hours);
   }
 
-  return Math.round(sum * 100) / 100;
+  return sum;
 }
 
 GuildMember.prototype.getNetworkPilotTime = async function () {
@@ -66,6 +31,35 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
 
   if (!additionalTime[networkCID]) {
     additionalTime[networkCID] = {};
+  }
+
+  const responseSecond = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/history`);
+  const dataSecond = await responseSecond.json();
+
+  if (!dataSecond) { return null; }
+
+  for (const item of dataSecond.items) {
+    const memberCID = item.vatsim_id;
+    const memberCallsign = item.callsign;
+
+    const startTime = new Date(item.start);
+    const endTime = item.end === null ? new Date() : new Date(item.end);
+
+    const today = new Date();
+    if (endTime.toDateString() !== today.toDateString()) { continue; }
+
+    const timeDifference = endTime - startTime;
+    const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
+
+    if (additionalTime[memberCID]) {
+      if (!additionalTime[memberCID][memberCallsign]) {
+        additionalTime[memberCID][memberCallsign] = hoursDifference;
+      }
+
+      if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
+        additionalTime[memberCID][memberCallsign] = hoursDifference;
+      }
+    }
   }
 
   console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM / ${data.pilot} + ${getSumOfAdditionalTime(networkCID)} (${data.pilot + getSumOfAdditionalTime(networkCID)})`);
