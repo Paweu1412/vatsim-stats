@@ -48,7 +48,7 @@ const verifyRequiredRolesExisting = async (guild) => {
 }
 
 const getRandomTimeout = () => {
-  return Math.floor(Math.random() * (5 * 60 * 1000 - 1 * 60 * 1000 + 1)) + 1 * 60 * 1000;
+  return Math.floor(Math.random() * (30 * 60 * 1000 - 5 * 60 * 1000 + 1)) + 5 * 60 * 1000;
 }
 
 export const initRoleAssignmentsModule = async (client, guild) => {
