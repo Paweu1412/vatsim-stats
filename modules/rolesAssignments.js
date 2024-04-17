@@ -8,14 +8,16 @@ const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
 const LANGUAGE = process.env.LANGUAGE;
 
 const requiredRoles = {
+  '👨‍✈️ 0h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
+  '👨‍✈️ 5h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
   '👨‍✈️ 10h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
   '👨‍✈️ 50h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
   '👨‍✈️ 100h+': { 'color': '#FFFFFF', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
   '👨‍✈️ 150h+': { 'color': '#FFF5CC', 'banner': 'https://i.imgur.com/2CifDr3.gif' },
   '👨‍✈️ 200h+': { 'color': '#FFEB99', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
   '👨‍✈️ 250h+': { 'color': '#FFE066', 'banner': 'https://i.imgur.com/a3nJDE3.gif' },
-  '👨‍✈️ 300h+': { 'color': '#FFD633', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
-  '👨‍✈️ 350h+': { 'color': '#FFCC00', 'banner': 'https://iimgur.com/Tlctnqw.gif' },
+  '👨‍✈️ 300h+': { 'color': '#FFD633', 'banner': 'https://i.imgur.com/Tlctnqw.gif' },
+  '👨‍✈️ 350h+': { 'color': '#FFCC00', 'banner': 'https://i.imgur.com/Tlctnqw.gif' },
   '👨‍✈️ 500h+': { 'color': '#FFB200', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
   '👨‍✈️ 750h+': { 'color': '#FF9900', 'banner': 'https://i.imgur.com/bKz6Y0L.gif' },
   '👨‍✈️ 1000h+': { 'color': '#FF7F00', 'banner': 'https://i.imgur.com/AGPSJMs.gif' },
