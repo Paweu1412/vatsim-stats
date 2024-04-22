@@ -25,10 +25,9 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
   const networkCID = this.getNetworkCID();
 
   const response = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/stats`);
-  if (response.status !== 200) { return null; }
+  if (!response) { return null; }
 
   const data = await response.json();
-
   if (!data?.pilot) { return null; }
 
   if (!additionalTime[networkCID]) {
@@ -36,9 +35,10 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
   }
 
   const responseSecond = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/history`);
-  if (responseSecond.status !== 200) { return null; }
+  if (!responseSecond) { return null; }
 
   const dataSecond = await responseSecond.json();
+  if (!dataSecond) { return null; }
 
   for (const item of dataSecond.items) {
     const memberCID = item.vatsim_id;
