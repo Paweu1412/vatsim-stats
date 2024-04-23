@@ -19,66 +19,80 @@ const getSumOfAdditionalTime = (networkCID) => {
   return sum;
 }
 
+async function fetchData(url) {
+  let retries = 3;
+
+  while (retries > 0) {
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return await response.json();
+    } catch (error) {
+      retries--;
+
+      if (retries === 0) {
+        throw error;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+  }
+}
+
 GuildMember.prototype.getNetworkPilotTime = async function () {
-  if (this.getNetworkCID() === null) { return null; }
-
-  const networkCID = this.getNetworkCID();
-
   try {
-    const response = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/stats`);
+    if (this.getNetworkCID() === null) { return null; }
 
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.statusText}`);
-    }
+    const networkCID = this.getNetworkCID();
 
-    const data = await response.json();
-    if (!data?.pilot) { return null; }
+    const data = await fetchData(`https://api.vatsim.net/v2/members/${networkCID}/stats`);
+    const dataSecond = await fetchData(`https://api.vatsim.net/v2/members/${networkCID}/history`);
 
-    if (!additionalTime[networkCID]) {
-      additionalTime[networkCID] = {};
-    }
+    if (data && dataSecond.count !== 0) {
+      if (!additionalTime[networkCID]) {
+        additionalTime[networkCID] = {};
+      }
 
-    const responseSecond = await fetch(`https://api.vatsim.net/v2/members/${networkCID}/history`);
+      for (const item of dataSecond.items) {
+        const memberCID = item.vatsim_id;
+        const memberCallsign = item.callsign;
 
-    if (!responseSecond.ok) {
-      throw new Error(`Network response was not ok: ${responseSecond.statusText}`);
-    }
+        const startTime = new Date(item.start);
+        const endTime = item.end === null ? new Date() : new Date(item.end);
+        const today = new Date();
 
-    const dataSecond = await responseSecond.json();
-    if (!dataSecond) { return null; }
+        if (endTime.toDateString() !== today.toDateString()) { continue; }
 
-    for (const item of dataSecond.items) {
-      const memberCID = item.vatsim_id;
-      const memberCallsign = item.callsign;
+        const timeDifference = endTime - startTime;
+        const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
 
-      const startTime = new Date(item.start);
-      const endTime = item.end === null ? new Date() : new Date(item.end);
+        if (additionalTime[memberCID]) {
+          if (!additionalTime[memberCID][memberCallsign]) {
+            additionalTime[memberCID][memberCallsign] = hoursDifference;
+          }
 
-      const today = new Date();
-      if (endTime.toDateString() !== today.toDateString()) { continue; }
-
-      const timeDifference = endTime - startTime;
-      const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
-
-      if (additionalTime[memberCID]) {
-        if (!additionalTime[memberCID][memberCallsign]) {
-          additionalTime[memberCID][memberCallsign] = hoursDifference;
-        }
-
-        if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
-          additionalTime[memberCID][memberCallsign] = hoursDifference;
+          if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
+            additionalTime[memberCID][memberCallsign] = hoursDifference;
+          }
         }
       }
+      console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM / ${data.pilot} + ${getSumOfAdditionalTime(networkCID)} (${data.pilot + getSumOfAdditionalTime(networkCID)})`);
+
+      return data.pilot + getSumOfAdditionalTime(networkCID);
+    } else {
+      return null;
     }
-
-    console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM / ${data.pilot} + ${getSumOfAdditionalTime(networkCID)} (${data.pilot + getSumOfAdditionalTime(networkCID)})`);
-
-    return data.pilot + getSumOfAdditionalTime(networkCID);
   } catch (error) {
-    console.error('Error during network request:', error);
+    console.error(`[ROLES] Error fetching data from VATSIM API for ${this.user.username}: ${error}`);
+
     return null;
   }
 }
+
 
 String.prototype.format = function () {
   let args = arguments;
