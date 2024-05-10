@@ -72,14 +72,15 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
 
         if (additionalTime[memberCID]) {
           if (!additionalTime[memberCID][memberCallsign]) {
-            additionalTime[memberCID][memberCallsign] = hoursDifference;
+            additionalTime[memberCID][memberCallsign] = parseFloat(hoursDifference);
           }
 
           if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
-            additionalTime[memberCID][memberCallsign] = hoursDifference;
+            additionalTime[memberCID][memberCallsign] += parseFloat(hoursDifference);
           }
         }
       }
+
       console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM / ${data.pilot} + ${getSumOfAdditionalTime(networkCID)} (${data.pilot + getSumOfAdditionalTime(networkCID)})`);
 
       return data.pilot + getSumOfAdditionalTime(networkCID);
