@@ -7,18 +7,6 @@ GuildMember.prototype.getNetworkCID = function () {
   return match ? match[1] : null;
 }
 
-let additionalTime = {}
-
-const getSumOfAdditionalTime = (networkCID) => {
-  let sum = 0;
-
-  for (const [callsign, hours] of Object.entries(additionalTime[networkCID])) {
-    sum += Number(hours);
-  }
-
-  return sum;
-}
-
 async function fetchData(url) {
   let retries = 3;
 
@@ -44,6 +32,8 @@ async function fetchData(url) {
 }
 
 GuildMember.prototype.getNetworkPilotTime = async function () {
+  let additionalTime = {};
+
   try {
     if (this.getNetworkCID() === null) { return null; }
 
@@ -53,14 +43,9 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
     const dataSecond = await fetchData(`https://api.vatsim.net/v2/members/${networkCID}/history`);
 
     if (data && dataSecond.count !== 0) {
-      if (!additionalTime[networkCID]) {
-        additionalTime[networkCID] = {};
-      }
+      additionalTime[networkCID] = 0;
 
       for (const item of dataSecond.items) {
-        const memberCID = item.vatsim_id;
-        const memberCallsign = item.callsign;
-
         const startTime = new Date(item.start);
         const endTime = item.end === null ? new Date() : new Date(item.end);
         const today = new Date();
@@ -68,22 +53,15 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
         if (endTime.toDateString() !== today.toDateString()) { continue; }
 
         const timeDifference = endTime - startTime;
-        const hoursDifference = ((timeDifference / 1000) / 3600).toFixed(2);
+        const hoursDifference = parseFloat(((timeDifference / 1000) / 3600).toFixed(2));
+        console.log(networkCID + ' ' + hoursDifference);
 
-        if (additionalTime[memberCID]) {
-          if (!additionalTime[memberCID][memberCallsign]) {
-            additionalTime[memberCID][memberCallsign] = parseFloat(hoursDifference);
-          }
-
-          if (additionalTime[memberCID][memberCallsign] !== hoursDifference) {
-            additionalTime[memberCID][memberCallsign] += parseFloat(hoursDifference);
-          }
-        }
+        additionalTime[networkCID] += hoursDifference;
       }
 
-      console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM / ${data.pilot} + ${getSumOfAdditionalTime(networkCID)} (${data.pilot + getSumOfAdditionalTime(networkCID)})`);
+      console.log(`[ROLES] Fetched ${this.user.username} hours on VATSIM / ${data.pilot} + ${additionalTime[networkCID]} (${data.pilot + additionalTime[networkCID]})`);
 
-      return data.pilot + getSumOfAdditionalTime(networkCID);
+      return data.pilot + additionalTime[networkCID];
     } else {
       return null;
     }
