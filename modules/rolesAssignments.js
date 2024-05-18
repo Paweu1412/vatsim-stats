@@ -2,7 +2,7 @@ import { EmbedBuilder } from 'discord.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import locales from '../locales.json' assert { type: 'json' };
+import locales from '../locales.json' with { type: 'json' };
 
 const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
 const LANGUAGE = process.env.LANGUAGE;
@@ -80,6 +80,8 @@ export const initRoleAssignmentsModule = async (client, guild) => {
         assignedRole = roleName;
       }
     }
+
+    if (lastHighestRole < currentlyAssignedVatsimRole) { return; }
 
     if (currentlyAssignedVatsimRole !== lastHighestRole) {
       const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('👨‍✈️'));

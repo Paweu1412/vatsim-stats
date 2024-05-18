@@ -54,7 +54,6 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
 
         const timeDifference = endTime - startTime;
         const hoursDifference = parseFloat(((timeDifference / 1000) / 3600).toFixed(2));
-        console.log(networkCID + ' ' + hoursDifference);
 
         additionalTime[networkCID] += hoursDifference;
       }
@@ -71,7 +70,6 @@ GuildMember.prototype.getNetworkPilotTime = async function () {
     return null;
   }
 }
-
 
 String.prototype.format = function () {
   let args = arguments;
