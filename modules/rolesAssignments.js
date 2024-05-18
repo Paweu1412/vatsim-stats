@@ -65,12 +65,16 @@ export const initRoleAssignmentsModule = async (client, guild) => {
       return;
     }
 
+    console.log(networkPilotHours);
+
     let reachedNewRecord = false;
     let assignedRole = null;
     let lastHighestRole = null;
 
     let currentlyAssignedVatsimRole = member.roles.cache.filter(role => role.name.startsWith('👨‍✈️'))
     currentlyAssignedVatsimRole = currentlyAssignedVatsimRole.map(role => Number(role.name.match(/\d+/)[0]))[0];
+
+    if (networkPilotHours < currentlyAssignedVatsimRole) { return; }
 
     for (const [roleName] of Object.entries(requiredRoles)) {
       const hoursFromRoleName = Number(roleName.match(/\d+/)[0]);
@@ -80,8 +84,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
         assignedRole = roleName;
       }
     }
-
-    if (lastHighestRole < currentlyAssignedVatsimRole) { return; }
 
     if (currentlyAssignedVatsimRole !== lastHighestRole) {
       const rolesToRemove = member.roles.cache.filter(role => role.name.startsWith('👨‍✈️'));
