@@ -65,8 +65,6 @@ export const initRoleAssignmentsModule = async (client, guild) => {
       return;
     }
 
-    console.log(networkPilotHours);
-
     let reachedNewRecord = false;
     let assignedRole = null;
     let lastHighestRole = null;
