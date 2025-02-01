@@ -1,8 +1,9 @@
 import { EmbedBuilder } from 'discord.js';
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
 dotenv.config();
 
-import locales from '../locales.json' with { type: 'json' };
+const locales = JSON.parse(readFileSync(new URL('../locales.json', import.meta.url)));
 
 const BOT_MESSAGES_ID = process.env.BOT_MESSAGES_ID;
 const LANGUAGE = process.env.LANGUAGE;
