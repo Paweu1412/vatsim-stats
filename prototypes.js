@@ -8,27 +8,35 @@ GuildMember.prototype.getNetworkCID = function () {
 }
 
 async function fetchData(url) {
-  let retries = 3;
+  // let retries = 3;
 
-  while (retries > 0) {
-    try {
-      const response = await fetch(url);
+  // while (retries > 0) {
+  //   try {
+  //     const response = await fetch(url);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+  //     if (!response.ok) {
+  //       throw new Error(response.statusText);
+  //     }
 
-      return await response.json();
-    } catch (error) {
-      retries--;
+  //     return await response.json();
+  //   } catch (error) {
+  //     retries--;
 
-      if (retries === 0) {
-        throw error;
-      }
+  //     if (retries === 0) {
+  //       throw error;
+  //     }
 
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    }
+  //     await new Promise(resolve => setTimeout(resolve, 3000));
+  //   }
+  // }
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
   }
+
+  return await response.json();
 }
 
 GuildMember.prototype.getNetworkPilotTime = async function () {
