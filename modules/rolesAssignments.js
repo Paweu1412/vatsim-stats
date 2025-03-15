@@ -46,7 +46,7 @@ const verifyRequiredRolesExisting = async (guild) => {
   }
 };
 
-const setMemberRole = async (member) => {
+const setMemberRole = async (member, skipEmbed) => {
   let networkPilotHours = await member.getNetworkPilotTime();
   if (networkPilotHours === null) {
     console.log(`[ROLES] Failed to fetch ${member.user.username} hours on VATSIM`);
@@ -71,44 +71,45 @@ const setMemberRole = async (member) => {
   if (newRole) {
     await member.roles.add(newRole);
 
-    const channel = member.guild.channels.cache.get(BOT_MESSAGES_ID);
-    if (channel) {
-      const embed = new EmbedBuilder()
-        .setTitle(locales[LANGUAGE].title)
-        .setDescription(locales[LANGUAGE].message.format(`<@${member.user.id}>`, highestRole.match(/\d+/)[0]))
-        .setColor(requiredRoles[highestRole].color)
-        .setImage(requiredRoles[highestRole].banner);
+    if (!skipEmbed) {
+      const channel = member.guild.channels.cache.get(BOT_MESSAGES_ID);
 
-      await channel.send({ embeds: [embed] });
+      if (channel) {
+        const embed = new EmbedBuilder()
+          .setTitle(locales[LANGUAGE].title)
+          .setDescription(locales[LANGUAGE].message.format(`<@${member.user.id}>`, highestRole.match(/\d+/)[0]))
+          .setColor(requiredRoles[highestRole].color)
+          .setImage(requiredRoles[highestRole].banner);
+
+        await channel.send({ embeds: [embed] });
+      }
     }
   }
 };
 
 export const initRoleAssignmentsModule = async (client, guild) => {
-  let isChecking = false;
   await verifyRequiredRolesExisting(guild);
 
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
     if (oldMember.getNetworkCID() !== newMember.getNetworkCID()) {
       console.log(`[ROLES] Pilot ${newMember.user.username} changed VATSIM CID`);
-      await setMemberRole(newMember);
+      await setMemberRole(newMember, true);
     }
   });
 
   console.log(`[INFO] Role assignments module initialized`);
 
   const updateRoles = async () => {
-    if (isChecking) return;
-    isChecking = true;
-
     console.log(`[ROLES] Starting role check for all pilots`);
 
     let users = 0;
+
     for (const member of guild.members.cache.values()) {
       if (member.user.bot || member.getNetworkCID() === null) continue;
 
       setTimeout(async () => {
         console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM`);
+
         await setMemberRole(member);
       }, users * 20000);
 
@@ -116,10 +117,7 @@ export const initRoleAssignmentsModule = async (client, guild) => {
     }
 
     console.log(`[ROLES] Finished role check`);
-    isChecking = false;
+
+    updateRoles();
   };
-
-  updateRoles();
-
-  setInterval(updateRoles, 10 * 60 * 1000);
 };
