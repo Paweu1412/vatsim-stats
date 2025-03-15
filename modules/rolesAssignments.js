@@ -111,13 +111,24 @@ export const initRoleAssignmentsModule = async (client, guild) => {
         console.log(`[ROLES] Checking pilot ${member.user.username} hours on VATSIM`);
 
         await setMemberRole(member);
+
+        users--;
+
+        if (users === 0) {
+          console.log(`[ROLES] Finished role check`);
+
+          updateRoles();
+        }
       }, users * 20000);
 
       users++;
     }
 
-    console.log(`[ROLES] Finished role check`);
-
-    updateRoles();
+    if (users === 0) {
+      console.log(`[ROLES] Finished role check`);
+      updateRoles();
+    }
   };
+
+  updateRoles();
 };
