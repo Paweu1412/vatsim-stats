@@ -93,7 +93,17 @@ export const initRoleAssignmentsModule = async (client, guild) => {
   client.on('guildMemberUpdate', async (oldMember, newMember) => {
     if (oldMember.getNetworkCID() !== newMember.getNetworkCID()) {
       console.log(`[ROLES] Pilot ${newMember.user.username} changed VATSIM CID`);
-      await setMemberRole(newMember, true);
+
+      if (newMember.getNetworkCID() === null) {
+        console.log(`[ROLES] Pilot ${newMember.user.username} removed VATSIM CID`);
+
+        let currentlyAssignedRole = newMember.roles.cache.find(role => role.name.startsWith('👨‍✈️'));
+        if (currentlyAssignedRole) {
+          await newMember.roles.remove(currentlyAssignedRole);
+        }
+      } else {
+        await setMemberRole(newMember, true);
+      }
     }
   });
 
