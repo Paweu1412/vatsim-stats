@@ -61,7 +61,13 @@ const setMemberRole = async (member, skipEmbed) => {
     if (networkPilotHours >= hours) highestRole = roleName;
   }
 
-  if (currentlyAssignedRole?.name === highestRole) return;
+  if (currentlyAssignedRole) {
+    const currentHours = Number(currentlyAssignedRole.name.match(/\d+/)[0]);
+    if (currentHours >= Number(highestRole.match(/\d+/)[0])) {
+      console.log(`[ROLES] ${member.user.username} already has a higher or equal role, skipping.`);
+      return;
+    }
+  }
 
   if (currentlyAssignedRole) {
     await member.roles.remove(currentlyAssignedRole);
